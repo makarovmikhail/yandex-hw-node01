@@ -1,6 +1,6 @@
 const http = require("http");
 const express = require("express");
-const {PORT} = require("./config");
+const {PORT} = require("./src/config");
 
 const app = express();
 
