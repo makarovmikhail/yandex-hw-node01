@@ -57,17 +57,17 @@ app.delete("/image/:id", (req, res) => {
   const imageId = req.params.id;
   const image = db.findOne(imageId);
   if (!image) {
-    res.json({stutus: "error"});
+    res.json({stutus: "ERROR"});
   } else {
     removeFile(
       path.join(__dirname, "./images", image.getOriginalFileName())
     ).then(
       (result) => {
         db.remove(imageId);
-        res.json({status: "ok"});
+        res.json({status: "OK"});
       },
       (err) => {
-        res.json({stutus: "error"});
+        res.json({stutus: "ERROR"});
       }
     );
   }
@@ -82,30 +82,27 @@ app.get("/merge", (req, res) => {
   const frontImage = db.findOne(front);
   const backImage = db.findOne(back);
 
-  const frontImageFile = fs.createReadStream(
-    path.join(__dirname, "./target/cat.jpeg")
-  );
-
-  const backImageFile = fs.createReadStream(
-    path.join(__dirname, "./target/space.jpeg")
-  );
-
-  backrem
-    .replaceBackground(frontImageFile, backImageFile, color, threshold)
-    .then(async (readableStream) => {
-      const writableStream = fs.createWriteStream(
-        path.resolve(__dirname, "./images/result.jpg")
+  if (!frontImage || !backImage) {
+    res.json({stutus: "ERROR"});
+  } else {
+    try {
+      const frontImageFile = fs.createReadStream(
+        path.join(__dirname, "images/", frontImage.getOriginalFileName())
       );
-      readableStream
-        .pipe(writableStream)
-        .on("error", (err) => {
-          console.log(err);
-          res.json({status: err});
-        })
-        .on("finish", () => {
-          res.json({status: "OK"});
+
+      const backImageFile = fs.createReadStream(
+        path.join(__dirname, "images/", backImage.getOriginalFileName())
+      );
+
+      backrem
+        .replaceBackground(frontImageFile, backImageFile, color, threshold)
+        .then(async (readableStream) => {
+          readableStream.pipe(res);
         });
-    });
+    } catch (e) {
+      res.json({stutus: e});
+    }
+  }
 });
 
 const server = http.createServer(app);
