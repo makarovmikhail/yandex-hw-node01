@@ -34,8 +34,23 @@ app.get("/list", (req, res) => {
   res.json(db.images);
 });
 
-app.get("/image/:id", (req, res) => {
-  res.json({imageId: req.params.id});
+const getImageMiddleware = (req, res, next) => {
+  res.setHeader("Content-Type", "image/*");
+  next();
+};
+
+app.get("/image/:id", getImageMiddleware, (req, res) => {
+  const image = db.findOne(req.params.id);
+
+  if (!image) {
+    res.json({status: "ERROR"});
+  } else {
+    let readStream = fs.createReadStream(
+      path.join(__dirname, "images/", image.getOriginalFileName())
+    );
+
+    readStream.pipe(res);
+  }
 });
 
 app.delete("/image/:id", (req, res) => {
