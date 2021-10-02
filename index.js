@@ -26,9 +26,8 @@ const upload = multer({storage});
 const {PORT} = require("./src/config");
 const {removeFile} = require("./src/utils/fs");
 
-
 app.post("/upload", upload.single("image"), (req, res) => {
-  res.json(req.file.imageId);
+  res.json({id: req.file.imageId});
 });
 
 app.get("/list", (req, res) => {
@@ -45,7 +44,9 @@ app.delete("/image/:id", (req, res) => {
   if (!image) {
     res.json({stutus: "error"});
   } else {
-    removeFile(path.join(__dirname, "./images", image.getOriginalFileName())).then(
+    removeFile(
+      path.join(__dirname, "./images", image.getOriginalFileName())
+    ).then(
       (result) => {
         db.remove(imageId);
         res.json({status: "ok"});
