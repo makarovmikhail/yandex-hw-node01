@@ -96,9 +96,14 @@ app.get("/merge", getImageMiddleware, (req, res) => {
 
       backrem
         .replaceBackground(frontImageFile, backImageFile, color, threshold)
-        .then(async (readableStream) => {
-          readableStream.pipe(res);
-        });
+        .then(
+          async (readableStream) => {
+            readableStream.pipe(res);
+          },
+          (e) => {
+            res.json({error: e});
+          }
+        );
     } catch (e) {
       res.json({stutus: e});
     }
