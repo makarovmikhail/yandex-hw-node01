@@ -76,7 +76,7 @@ app.delete("/image/:id", (req, res) => {
 app.get("/merge", getImageMiddleware, (req, res) => {
   const front = req.query.front;
   const back = req.query.back;
-  const color = JSON.parse(req.query.color);
+  const color = req.query.color ? JSON.parse(req.query.color) : null;
   const threshold = Number(req.query.threshold);
 
   const frontImage = db.findOne(front);
