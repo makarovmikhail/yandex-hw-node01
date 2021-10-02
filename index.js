@@ -77,7 +77,7 @@ app.get("/merge", getImageMiddleware, (req, res) => {
   const front = req.query.front;
   const back = req.query.back;
   const color = JSON.parse(req.query.color);
-  const treshold = Number(req.query.treshold);
+  const threshold = Number(req.query.threshold);
 
   const frontImage = db.findOne(front);
   const backImage = db.findOne(back);
@@ -95,7 +95,7 @@ app.get("/merge", getImageMiddleware, (req, res) => {
       );
 
       backrem
-        .replaceBackground(frontImageFile, backImageFile, color, treshold)
+        .replaceBackground(frontImageFile, backImageFile, color, threshold)
         .then(
           async (readableStream) => {
             readableStream.pipe(res);
