@@ -76,7 +76,6 @@ app.delete("/image/:id", (req, res) => {
 app.get("/merge", getImageMiddleware, (req, res) => {
   const front = req.query.front;
   const back = req.query.back;
-  const color = req.query.color ? JSON.parse(req.query.color) : null;
   const threshold = Number(req.query.threshold);
 
   const frontImage = db.findOne(front);
@@ -94,6 +93,11 @@ app.get("/merge", getImageMiddleware, (req, res) => {
         path.join(__dirname, "images/", backImage.getOriginalFileName())
       );
 
+      const color = req.query.color
+        ? JSON.parse(req.query.color).length === 3
+          ? JSON.parse(req.query.color)
+          : [255, 255, 255]
+        : [255, 255, 255];
       backrem
         .replaceBackground(frontImageFile, backImageFile, color, threshold)
         .then(
