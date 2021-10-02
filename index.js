@@ -24,12 +24,12 @@ const storage = new MyCustomStorage({
 const upload = multer({storage});
 
 const {PORT} = require("./src/config");
-// const {removeFile} = require("./src/utils/fs");
+const {removeFile} = require("./src/utils/fs");
 
 
-// app.post("/upload", upload.single("image"), (req, res) => {
-//   res.json(req.file.imageId);
-// });
+app.post("/upload", upload.single("image"), (req, res) => {
+  res.json(req.file.imageId);
+});
 
 app.get("/list", (req, res) => {
   res.json(db.images);

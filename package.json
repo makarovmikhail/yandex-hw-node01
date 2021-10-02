@@ -18,10 +18,12 @@
   },
   "homepage": "https://github.com/makarovmikhail/yandex-hw-node01#readme",
   "dependencies": {
+    "backrem": "^1.1.0",
     "events": "^3.3.0",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
+    "multer": "^1.4.3",
     "nanoid": "^3.1.28",
     "path": "^0.12.7",
     "util": "^0.12.4"
