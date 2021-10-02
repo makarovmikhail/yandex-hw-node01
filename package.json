@@ -19,6 +19,7 @@
   "homepage": "https://github.com/makarovmikhail/yandex-hw-node01#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "http": "0.0.1-security"
+    "http": "0.0.1-security",
+    "nanoid": "^3.1.28"
   }
 }
