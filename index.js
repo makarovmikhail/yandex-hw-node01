@@ -73,7 +73,7 @@ app.delete("/image/:id", (req, res) => {
   }
 });
 
-app.get("/merge", (req, res) => {
+app.get("/merge", getImageMiddleware, (req, res) => {
   const front = req.query.front;
   const back = req.query.back;
   const color = JSON.parse(req.query.color);
