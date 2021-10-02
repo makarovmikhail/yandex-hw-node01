@@ -1,39 +1,35 @@
-const path = require('path');
+const path = require("path");
 
-const { svgFolder } = require('../config');
-const { writeFile, removeFile } = require('../utils/fs');
-const { generateId } = require('../utils/generateId');
+const {jpegFolder} = require("../config");
+const {writeFile, removeFile} = require("../utils/fs");
+const {generateId} = require("../utils/generateId");
 
 module.exports = class File {
-  constructor(id, createdAt, size, mimeType) {
+  constructor(id, size, uploadedAt, mimeType) {
     this.id = id || generateId();
-    this.createdAt = createdAt || Date.now();
     this.size = size || 0;
-    this.mimeType = mimeType;
-
-    this.originalFilename = `${this.id}_original.jpeg`;
+    this.uploadedAt = uploadedAt || Date.now();
+    this.mimeType = mimeType || "";
   }
 
-  async saveOriginal(content) {
-    await writeFile(path.resolve(svgFolder, this.originalFilename), content);
+  getOriginalFileName() {
+    return `${this.id}_original.jpeg`;
   }
 
-  async removeOriginal() {
-    await removeFile(path.resolve(svgFolder, this.originalFilename));
+  async saveOriginalFile(file) {
+    await writeFile(path.resolve(jpegFolder, this.getOriginalFileName()), file);
   }
 
-  toPublicJSON() {
-    return {
-      id: this.id,
-      originalUrl: `/files/${this.id}_original.svg`,
-      createdAt: this.createdAt,
-    };
+  async removeOriginalFile() {
+    await removeFile(path.resolve(jpegFolder, this.getOriginalFileName()));
   }
 
   toJSON() {
     return {
       id: this.id,
-      createdAt: this.createdAt,
+      size: this.size,
+      uploadedAt: this.uploadedAt,
+      mimeType: this.mimeType
     };
   }
 };

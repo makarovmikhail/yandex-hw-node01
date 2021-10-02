@@ -1,8 +1,11 @@
 const {EventEmitter} = require("events");
 const {existsSync} = require("fs");
+const fs = require("fs");
+const {imagesFolder} = require("../config");
 const {dbDumpFile} = require("../config");
-const {writeFile} = require("../utils/fs");
-const {prettifyJsonToString} = require("../utils/prettifyJsonToString");
+const path = require("path");
+// const {writeFile} = require("../utils/fs");
+// const {prettifyJsonToString} = require("../utils/prettifyJsonToString");
 const File = require("./File");
 
 class Database extends EventEmitter {
@@ -13,6 +16,8 @@ class Database extends EventEmitter {
   }
 
   async initFromDump() {
+    
+
     if (existsSync(dbDumpFile) === false) {
       return;
     }
@@ -22,62 +27,32 @@ class Database extends EventEmitter {
     if (typeof dump.images === "object") {
       this.images = [];
 
-      for (let image of dump.images) {
-        this.images.push(new File(image.id, image.createdAt));
+      for (let id of dump.images) {
+        const image = dump.images[id];
+
+        this.images.push(new File(image.id, image.size, image.uploadedAt));
       }
     }
   }
 
-  async insert(file, originalContent) {
-    await svg.saveOriginal(originalContent);
-
-    this.images.push(file);
+  insert(image) {
+    this.images.push(image);
   }
 
-  async remove(imageId) {
-    const fileRaw = this.idToSvg[svgId];
-
-    const svg = new Svg(svgRaw.id, svgRaw.createdAt);
-
-    await svg.removeOriginal();
-
-    delete this.idToSvg[svgId];
-    delete this.likedIds[svgId];
-
-    this.emit('changed');
-
-    return svgId;
+  remove(imageId) {
+    const updatedImages = this.images.filter((img) => img.id !== imageId);
+    this.images = updatedImages;
   }
 
-  findOne(svgId) {
-    const svgRaw = this.idToSvg[svgId];
-
-    if (!svgRaw) {
-      return null;
+  findOne(imageId) {
+    for (let image of this.images) {
+      if (image.id === imageId) return image;
     }
-
-    const svg = new Svg(svgRaw.id, svgRaw.createdAt);
-
-    return svg;
-  }
-
-  find(isLiked = false) {
-    let allSvgs = Object.values(this.idToSvg);
-
-    if (isLiked === true) {
-      allSvgs = allSvgs.filter((svg) => this.likedIds[svg.id]);
-    }
-
-    allSvgs.sort((svgA, svgB) => svgB.createdAt - svgA.createdAt);
-
-    return allSvgs;
+    return null;
   }
 
   toJSON() {
-    return {
-      idToSvg: this.idToSvg,
-      likedIds: this.likedIds
-    };
+    return [this.images];
   }
 }
 

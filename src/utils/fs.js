@@ -1,4 +1,6 @@
+const {rejects} = require("assert");
 const fs = require("fs");
+const {resolve} = require("path");
 const util = require("util");
 
 const writeFileAsync = util.promisify(fs.writeFile);
@@ -13,8 +15,10 @@ module.exports = {
   removeFile: async (path) => {
     try {
       await unlinkFileAsync(path);
+      resolve("OK");
     } catch (err) {
       console.log(`removeFile error: file ${path} doesn't exist...`);
+      reject(err);
     }
   },
 
